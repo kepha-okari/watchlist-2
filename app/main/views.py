@@ -3,6 +3,7 @@ from . import main
 from ..requests import get_movies, get_movie, search_movie
 from .forms import ReviewForm
 from ..models import Review
+from flask_login import login_required
 
 # Views
 
@@ -28,14 +29,13 @@ def index():
     return render_template('index.html', title=title, popular=popular_movies, upcoming=upcoming_movie, now_showing=now_showing_movie)
 
 
-#@main.route('/movie/<int:id>')
-@main.route('/movie/review/new/<int:id>', methods = ['GET','POST'])
+@main.route('/movie/<int:id>')
 def movie(id):
     '''
     View movie page function that returns the movie details page and its data
     '''
     movie = get_movie(id)
-    title = f'{movie.title}'
+    title = '{movie.title}'
     reviews = Review.get_reviews(movie.id)
 
     return render_template('movie.html', title=title, movie=movie, reviews=reviews)
@@ -54,6 +54,7 @@ def search(movie_name):
 
 
 @main.route('/movie/review/new/<int:id>', methods=['GET', 'POST'])
+@login_required
 def new_review(id):
 
     form = ReviewForm()
